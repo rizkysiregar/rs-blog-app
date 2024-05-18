@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:rs_blog_app/core/theme/app_pallete.dart';
 import 'package:rs_blog_app/feature/auth/presentation/pages/signup_page.dart';
@@ -51,7 +50,8 @@ class _LoginPageState extends State<LoginPage> {
                 isObscureText: true,
               ),
               const SizedBox(height: 20),
-              const AuthGradientButton(
+              AuthGradientButton(
+                onPressed: () {},
                 buttonText: "Log In",
               ),
               const SizedBox(height: 20),
