@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rs_blog_app/core/common/constants/route_constants.dart';
 import 'package:rs_blog_app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:rs_blog_app/core/theme/theme.dart';
 import 'package:rs_blog_app/feature/auth/presentation/bloc/auth_bloc.dart';
+import 'package:rs_blog_app/feature/auth/presentation/pages/login_page.dart';
 import 'package:rs_blog_app/feature/auth/presentation/pages/signup_page.dart';
+import 'package:rs_blog_app/feature/movie/presentation/home_page.dart';
 import 'package:rs_blog_app/init_dependencies.dart';
 
 //  ***  comment for video tracing **** //
@@ -28,6 +32,47 @@ void main() async {
   );
 }
 
+// Go Router Configuration
+final GoRouter _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      name: RouteConstants.home,
+      builder: (context, state) {
+        return const HomePage();
+      },
+    ),
+    GoRoute(
+      path: '/register',
+      name: RouteConstants.register,
+      builder: (context, state) {
+        return const SignUpPage();
+      },
+    ),
+    GoRoute(
+      path: '/login',
+      name: RouteConstants.login,
+      builder: (context, state) {
+        return const LoginPage();
+      },
+    ),
+  ],
+  redirect: (context, state) async {
+    BlocSelector<AppUserCubit, AppUserState, bool>(
+      selector: (state) {
+        return state is AppUserLoggedIn;
+      },
+      builder: (context, isLoggedIn) {
+        if (isLoggedIn) {
+          return const HomePage();
+        }
+        return const SignUpPage();
+      },
+    );
+    return null;
+  },
+);
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -46,24 +91,11 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Blog App',
-        theme: AppTheme.darkThemeMode,
-        home: BlocSelector<AppUserCubit, AppUserState, bool>(
-          selector: (state) {
-            return state is AppUserLoggedIn;
-          },
-          builder: (context, isLoggedIn) {
-            if (isLoggedIn) {
-              return const Scaffold(
-                body: Center(
-                  child: Text('LoggedIn !'),
-                ),
-              );
-            }
-            return const SignUpPage();
-          },
-        ));
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'Blog App',
+      theme: AppTheme.darkThemeMode,
+      routerConfig: _router,
+    );
   }
 }
