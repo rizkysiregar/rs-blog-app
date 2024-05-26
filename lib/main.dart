@@ -7,6 +7,7 @@ import 'package:rs_blog_app/core/theme/theme.dart';
 import 'package:rs_blog_app/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:rs_blog_app/feature/auth/presentation/pages/login_page.dart';
 import 'package:rs_blog_app/feature/auth/presentation/pages/signup_page.dart';
+import 'package:rs_blog_app/feature/movie/presentation/bloc/movie_bloc.dart';
 import 'package:rs_blog_app/feature/movie/presentation/home_page.dart';
 import 'package:rs_blog_app/init_dependencies.dart';
 
@@ -25,6 +26,9 @@ void main() async {
         ),
         BlocProvider(
           create: (_) => serviceLocator<AuthBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<MovieBloc>(),
         ),
       ],
       child: const MyApp(),
@@ -93,7 +97,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'Blog App',
+      title: 'Movie app',
       theme: AppTheme.darkThemeMode,
       routerConfig: _router,
     );
