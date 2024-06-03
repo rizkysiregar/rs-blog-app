@@ -6,3 +6,9 @@ abstract interface class UseCase<SuccessType, Params> {
 }
 
 class NoParams {}
+
+class DetailMovieParams {
+  final int id;
+
+  DetailMovieParams({required this.id});
+}

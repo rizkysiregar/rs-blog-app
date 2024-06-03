@@ -7,3 +7,9 @@ sealed class MovieEvent extends Equatable {
 }
 
 class FetchMovies extends MovieEvent {}
+
+class FetchDetailMovie extends MovieEvent {
+  final int id;
+
+  FetchDetailMovie({required this.id});
+}

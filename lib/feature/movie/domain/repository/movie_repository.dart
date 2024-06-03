@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:rs_blog_app/core/error/failures.dart';
+import 'package:rs_blog_app/feature/movie/data/model/detail_movie.dart';
 import 'package:rs_blog_app/feature/movie/data/model/movie.dart';
 
 abstract interface class MovieRepository {
@@ -7,4 +8,5 @@ abstract interface class MovieRepository {
   Future<Either<Failure, MovieResponse>> popularMovie();
   Future<Either<Failure, MovieResponse>> topRatedMovie();
   Future<Either<Failure, MovieResponse>> upComingMovie();
+  Future<Either<Failure, DetailMovie>> detailMovie({required int id});
 }

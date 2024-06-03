@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:rs_blog_app/core/error/exceptions.dart';
+import 'package:rs_blog_app/feature/movie/data/model/detail_movie.dart';
 import 'package:rs_blog_app/feature/movie/data/model/movie.dart';
 import 'package:rs_blog_app/init_dependencies.dart';
 
@@ -8,6 +9,7 @@ abstract interface class MovieRemoteDataSource {
   Future<MovieResponse> getPopularMovie();
   Future<MovieResponse> getTopRatedMovie();
   Future<MovieResponse> getUpComingMovie();
+  Future<DetailMovie> getDetailMovie({required int id});
 }
 
 class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
@@ -82,6 +84,24 @@ class MovieRemoteDataSourceImpl implements MovieRemoteDataSource {
         return MovieResponse.fromJson(response.data);
       } else {
         throw Exception('Failed to load movie');
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<DetailMovie> getDetailMovie({required int id}) async {
+    try {
+      String url = "movie/$id";
+      print("Detail movie called with id : $id");
+      final response = await _dio.get(url);
+      print("Detail movie: " + response.data.toString());
+
+      if (response.statusCode == 200) {
+        return DetailMovie.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load detail movie');
       }
     } catch (e) {
       throw Exception(e.toString());

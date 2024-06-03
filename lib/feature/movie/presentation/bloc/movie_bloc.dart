@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rs_blog_app/core/usecase/usecase.dart';
+import 'package:rs_blog_app/feature/movie/data/model/detail_movie.dart';
 import 'package:rs_blog_app/feature/movie/data/model/movie.dart';
 import 'package:rs_blog_app/feature/movie/domain/usecases/movie_usecase.dart';
 
@@ -10,74 +11,55 @@ part 'movie_state.dart';
 
 class MovieBloc extends Bloc<MovieEvent, MovieState> {
   final MovieUseCase _movieUseCase;
+  final DetailMovieUseCase _detailMovieUseCase;
 
-  MovieBloc({required MovieUseCase movieUseCase})
-      : _movieUseCase = movieUseCase,
+  MovieBloc({
+    required MovieUseCase movieUseCase,
+    required DetailMovieUseCase detailMovieUseCase,
+  })  : _movieUseCase = movieUseCase,
+        _detailMovieUseCase = detailMovieUseCase,
         super(MovieInitial()) {
     on<FetchMovies>((event, emit) async {
       emit(MovieLoading());
       final nowPlayingResult = await _movieUseCase.callNowPlaying(NoParams());
       final popularResult = await _movieUseCase.callPopular(NoParams());
+      final upComingResult = await _movieUseCase.callUpComing(NoParams());
 
+      /*
+        NOTE: !!
+        so it hit the next api if the previous api is success
+       */
       nowPlayingResult.fold(
         (failure) =>
             emit(const MovieFailure('Failure to fetch Now Playing movies')),
         (nowPlaying) => popularResult.fold(
           (failure) =>
               emit(const MovieFailure('Failure to fetch Popular movies')),
-          (popular) => emit(
-            MovieSuccess(
-              nowPlaying: nowPlaying,
-              popular: popular,
+          (popular) => upComingResult.fold(
+            (failure) =>
+                emit(const MovieFailure('Failed to fetch upcoming movies')),
+            (upcoming) => emit(
+              // This will consume bu th block builder, base on movie state, movie state is
+              // contains more than one success value
+              MovieSuccess(
+                nowPlaying: nowPlaying,
+                popular: popular,
+                upComing: upcoming,
+              ),
             ),
           ),
         ),
       );
     });
 
-    // on<MovieEvent>((_, emit) => emit(MovieLoading()));
-
-    // on<NowPlayingMovieEvent>(_nowPlaying);
-    // on<PopularMovieEvent>(_popular);
-    // on<TopRatedMovieEvent>(_topRated);
-    // on<UpComingMovieEvent>(_upComing);
+    on<FetchDetailMovie>((event, emit) async {
+      emit(MovieLoading());
+      final res =
+          await _detailMovieUseCase.call(DetailMovieParams(id: event.id));
+      res.fold(
+        (l) => emit(DetailMovieFailure(l.message)),
+        (r) => emit(DetailMovieSuccess(r)),
+      );
+    });
   }
-
-  // void _nowPlaying(NowPlayingMovieEvent event, Emitter<MovieState> emit) async {
-  //   emit(NowPlayingLoading());
-  //   final res = await _nowPlayingMovie.call(NoParams());
-
-  //   res.fold(
-  //     (l) => emit(NowPlayingFailure(l.message)),
-  //     (r) => emit(NowPlayingSuccess(r)),
-  //   );
-  // }
-
-  // void _popular(PopularMovieEvent event, Emitter<MovieState> emit) async {
-  //   emit(PopularLoading());
-  //   final res = await _popularMovie.call(NoParams());
-
-  //   res.fold(
-  //     (l) => emit(PopularFailure(l.message)),
-  //     (r) => emit(PopularSuccess(r)),
-  //   );
-  // }
-
-  // void _topRated(TopRatedMovieEvent event, Emitter<MovieState> emit) async {
-  //   final res = await _topRatedMovie.call(NoParams());
-
-  //   res.fold(
-  //     (l) => emit(MovieFailure(l.message)),
-  //     (r) => emit(MovieSuccess(r)),
-  //   );
-  // }
-
-  // void _upComing(UpComingMovieEvent event, Emitter<MovieState> emit) async {
-  //   final res = await _upCommingMovie.call(NoParams());
-
-  //   res.fold(
-  //     (l) => emit(MovieFailure(l.message)),
-  //     (r) => emit(MovieSuccess(r)),
-  //   );
-  // }
 }

@@ -93,10 +93,14 @@ void _initMovie() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => DetailMovieUseCase(serviceLocator()),
+    )
 
     //bloc
     ..registerLazySingleton(
       () => MovieBloc(
+        detailMovieUseCase: serviceLocator(),
         movieUseCase: serviceLocator(),
       ),
     );
@@ -108,9 +112,7 @@ void _initDio() {
     dio.options.baseUrl = Constants.baseUrl;
     dio.options.connectTimeout = const Duration(minutes: 2);
     dio.options.receiveTimeout = const Duration(minutes: 2);
-
     dio.options.headers['Authorization'] = Constants.token;
-
     return dio;
   });
 }

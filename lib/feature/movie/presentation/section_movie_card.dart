@@ -16,6 +16,7 @@ class SectionMovieCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Flexible(
               flex: 3,
@@ -32,7 +33,7 @@ class SectionMovieCard extends StatelessWidget {
             const SizedBox(height: 8),
             Flexible(
               child: Padding(
-                padding: const EdgeInsets.only(left: 3, top: 8),
+                padding: const EdgeInsets.only(left: 4, top: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

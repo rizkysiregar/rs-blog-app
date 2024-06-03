@@ -16,14 +16,15 @@ final class MovieLoading extends MovieState {}
 final class MovieSuccess extends MovieState {
   final MovieResponse nowPlaying;
   final MovieResponse popular;
+  final MovieResponse upComing;
 
-  const MovieSuccess({
-    required this.nowPlaying,
-    required this.popular,
-  });
+  const MovieSuccess(
+      {required this.nowPlaying,
+      required this.popular,
+      required this.upComing});
 
   @override
-  List<Object?> get props => [nowPlaying, popular];
+  List<Object?> get props => [nowPlaying, popular, upComing];
 }
 
 final class MovieFailure extends MovieState {
@@ -32,4 +33,16 @@ final class MovieFailure extends MovieState {
 
   @override
   List<Object?> get props => [message];
+}
+
+final class DetailMovieSuccess extends MovieState {
+  final DetailMovie detailMovie;
+
+  const DetailMovieSuccess(this.detailMovie);
+}
+
+final class DetailMovieFailure extends MovieState {
+  final String message;
+
+  const DetailMovieFailure(this.message);
 }

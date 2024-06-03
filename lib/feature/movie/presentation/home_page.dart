@@ -23,17 +23,21 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              homeHeader(),
-              const SizedBox(height: 8),
-              playingNow(),
-              const SizedBox(height: 8),
-              popularSectionMovie()
-            ],
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                homeHeader(),
+                const SizedBox(height: 8),
+                playingNow(),
+                const SizedBox(height: 8),
+                popularSectionMovie(),
+                const SizedBox(height: 8),
+                upComingSectionMovie()
+              ],
+            ),
           ),
         ),
       ),
@@ -140,6 +144,60 @@ Widget popularSectionMovie() {
                 itemBuilder: (context, index) {
                   return SectionMovieCard(
                     movie: state.popular.results[index],
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      } else {
+        return const Center(
+          child: Text('Fail to fetch'),
+        );
+      }
+    },
+  );
+}
+
+Widget upComingSectionMovie() {
+  return BlocConsumer<MovieBloc, MovieState>(
+    listener: (context, state) {
+      if (state is MovieFailure) {
+        showSnackbar(context, state.message);
+      }
+    },
+    builder: (context, state) {
+      if (state is MovieLoading) {
+        return const Loader();
+      } else if (state is MovieSuccess) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'UpComing',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  'See all',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.blue,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            SizedBox(
+              height: 290,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: state.upComing.results.length,
+                itemBuilder: (context, index) {
+                  return SectionMovieCard(
+                    movie: state.upComing.results[index],
                   );
                 },
               ),

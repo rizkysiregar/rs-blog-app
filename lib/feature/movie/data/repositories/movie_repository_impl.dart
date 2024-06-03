@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:rs_blog_app/core/error/exceptions.dart';
 import 'package:rs_blog_app/core/error/failures.dart';
 import 'package:rs_blog_app/feature/movie/data/datasources/movie_remote_data_source.dart';
+import 'package:rs_blog_app/feature/movie/data/model/detail_movie.dart';
 import 'package:rs_blog_app/feature/movie/data/model/movie.dart';
 import 'package:rs_blog_app/feature/movie/domain/repository/movie_repository.dart';
 
@@ -44,6 +45,16 @@ class MovieRepositoryImpl implements MovieRepository {
     try {
       final movie = await remoteDataSource.getUpComingMovie();
       return right(movie);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, DetailMovie>> detailMovie({required int id}) async {
+    try {
+      final detailMovie = await remoteDataSource.getDetailMovie(id: id);
+      return right(detailMovie);
     } on ServerException catch (e) {
       return left(Failure(e.message));
     }
